@@ -1,0 +1,80 @@
+//
+// Variables
+// --------------------------------------------------
+
+//== Colors
+//
+
+$black:                   #000 !default;
+$gray-darker:             lighten($black, 10%) !default;
+$gray-dark:               lighten($black, 20%) !default;
+$gray:                    lighten($black, 40%) !default;
+$gray-light:              lighten($black, 70%) !default;
+$gray-lighter:            lighten($black, 92.5%) !default;
+$gray-lightest:           lighten($black, 97.5%) !default;
+$white:                   #fff !default;
+
+$brand-primary:           #28bff8 !default;
+$brand-highlight:         #00abf1 !default;
+$brand-error:             #ba0100 !default;
+
+
+//== Base
+//
+
+$body-bg:                 $white !default;
+
+
+//== Media queries breakpoints
+//
+
+$container-lg:            100rem !default;
+
+$screen-sm:               36rem !default;
+$screen-md:               60rem !default;
+$screen-lg:               75rem !default;
+
+// Neat
+$media-sm:                new-breakpoint(min-width $screen-sm);
+$media-md:                new-breakpoint(min-width $screen-md);
+$media-lg:                new-breakpoint(min-width $screen-lg);
+$media-ie:                new-breakpoint(min-width 0\0);
+$gutter:                  modular-scale(1, 1em, $golden) !default;
+
+
+//== Typography
+//
+
+$text-color:              $gray-darker !default;
+$text-sub-color:          $gray !default;
+$link-color:              $brand-primary !default;
+$font-family-primary:     'Helvetica Neue', Arial, sans-serif !default;
+
+$font-size-base:          16px !default;
+$line-height-base:        1.5 !default;
+
+// Bourbon
+$em-base:                 $font-size-base !default;
+
+
+//== Components
+//
+
+$component-color:         $gray-lighter !default;
+$component-border:        1px solid $component-color !default;
+$component-radius:        0 !default;
+$component-padding:       2rem !default;
+$hr-border:               1px solid $gray-dark !default;
+
+
+//== Forms
+//
+
+$input-bg:                $gray-lighter !default;
+$input-color:             $gray-dark !default;
+$input-border:            $component-border !default;
+$input-border-radius:     $component-radius !default;
+$input-height-base:       2.4rem !default;
+$input-font-size:         1rem !default;
+$input-line-height:       1.333 !default;
+$input-highlight:         $brand-highlight !default;

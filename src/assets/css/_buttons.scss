@@ -1,0 +1,35 @@
+%btn {
+  border: 0;
+  display: inline-block;
+  cursor: pointer;
+  font-size: $input-font-size;
+  font-weight: bold;
+  line-height: $input-height-base;
+  margin-bottom: 0;
+  padding: 0 1rem;
+  text-align: center;
+  text-transform: uppercase;
+  transition: all .3s;
+  user-select: none;
+  vertical-align: middle;
+  white-space: nowrap; 
+
+  &:hover,
+  &:focus,
+  &:active,
+  &.active {
+    outline: none;
+  }
+}
+
+.btn-primary {
+  @extend %btn;
+
+  background-color: $brand-primary;
+  color: $white;
+
+  &:hover {
+    background-color: darken($brand-primary, 5%);
+    color: $white;
+  }
+}

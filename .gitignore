@@ -1,0 +1,19 @@
+# Ignore the build directories
+build
+httpdocs
+
+# Ignore Sass' cache
+.sass-cache/
+.cache/
+
+.DS_Store
+.rvmrc
+.env
+
+# all node modules
+node_modules/
+
+# all vendor code
+bower_components/
+
+npm-debug.log

@@ -1,0 +1,13 @@
+{
+  "name": "static-boilerplate",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "normalize-css": "latest"
+  }
+}

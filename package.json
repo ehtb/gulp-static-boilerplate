@@ -1,10 +1,15 @@
 {
-  "name": "static-boilerplate",
+  "name": "red.de",
   "version": "0.0.1",
   "author": "Edo <edo@helloneu.de>",
   "dependencies": {
+    "flightjs": "^1.5.0",
     "html5shiv": "git://github.com/aFarkas/html5shiv",
-    "normalize-css": "^2.3.1"
+    "jquery": "^2.1.3",
+    "normalize-css": "^2.3.1",
+    "raf": "^2.0.4",
+    "skrollr": "^0.6.26",
+    "slick-carousel": "^1.4.1"
   },
   "scripts": {
     "start": "gulp",
@@ -14,7 +19,6 @@
     "babel-core": "^4.7.16",
     "babel-eslint": "^2.0.2",
     "babel-loader": "^4.2.0",
-    "compression": "^1.0.2",
     "eslint": "^0.17.1",
     "grunt": "^0.4.5",
     "grunt-grunticon": "^2.1.6",
@@ -25,18 +29,18 @@
     "gulp-imagemin": "^0.5.0",
     "gulp-import-css": "^0.1.2",
     "gulp-jade": "^0.5.0",
+    "gulp-minify-css": "^1.0.0",
     "gulp-plumber": "^0.6.0",
     "gulp-sass": "^1.3.3",
     "gulp-sourcemaps": "^1.5.1",
     "gulp-uglify": "^0.2.1",
     "gulp-util": "^2.2.14",
+    "gulp-webpack": "^1.3.0",
     "marked": "^0.3.2",
     "node-bourbon": "^4.2.1-beta1",
     "node-neat": "^1.7.1-beta1",
     "sass-loader": "^0.5.0",
     "script-loader": "^0.6.1",
-    "webpack": "^1.7.3",
-    "webpack-dev-middleware": "^1.0.11",
-    "webpack-dev-server": "^1.7.0"
+    "webpack": "^1.7.3"
   }
 }

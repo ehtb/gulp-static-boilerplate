@@ -4,7 +4,7 @@
   "author": "Edo <edo@helloneu.de>",
   "dependencies": {
     "html5shiv": "git://github.com/aFarkas/html5shiv",
-    "normalize-css": "^2.3.1",
+    "normalize-css": "^2.3.1"
   },
   "scripts": {
     "start": "gulp",
@@ -34,6 +34,7 @@
     "node-bourbon": "^4.2.1-beta1",
     "node-neat": "^1.7.1-beta1",
     "sass-loader": "^0.5.0",
+    "script-loader": "^0.6.1",
     "webpack": "^1.7.3",
     "webpack-dev-middleware": "^1.0.11",
     "webpack-dev-server": "^1.7.0"

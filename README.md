@@ -1,4 +1,6 @@
-Clone and run `npm install && gulp`!
+Clone and run `npm install && npm run start`
+
+To build run `npm run build`
 
 
 ## Features

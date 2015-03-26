@@ -21,7 +21,9 @@ var neat = require('node-neat');
 var bourbon = require('node-bourbon');
 
 var srcPath = './src';
-var servePath = './httpdocs';
+var nodeEnv = process.env.NODE_ENV;
+var isProduction = nodeEnv === 'production';
+var servePath = isProduction ? './httpdocs' : 'build';
 
 var sassIncludePaths = [].concat(
                         neat.includePaths,
@@ -87,7 +89,7 @@ gulp.task('images', function() {
 gulp.task('webpack', function(callback) {
   var config = Object.create(webpackConfig);
 
-  if (process.env.ENV_VARIABLE !== 'production') {
+  if (!isProduction) {
     config.devtool = 'source-map';
     config.cache = true;
     config.debug = true;

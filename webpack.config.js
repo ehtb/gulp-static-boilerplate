@@ -1,8 +1,6 @@
 var webpack = require('webpack');
 
 module.exports = {
-  cache: true,
-
   entry: {
     vendor: './src/assets/js/vendor.js',
     application: './src/assets/js/application.js'

@@ -1,15 +1,10 @@
 {
-  "name": "red.de",
+  "name": "gulp-webrack-sass-static-boilerplate",
   "version": "0.0.1",
-  "author": "Edo <edo@helloneu.de>",
+  "author": "Edo <i@edo.me>",
   "dependencies": {
-    "flightjs": "^1.5.0",
     "html5shiv": "git://github.com/aFarkas/html5shiv",
-    "jquery": "^2.1.3",
-    "normalize-css": "^2.3.1",
-    "raf": "^2.0.4",
-    "skrollr": "^0.6.26",
-    "slick-carousel": "^1.4.1"
+    "normalize-css": "^2.3.1"
   },
   "scripts": {
     "start": "gulp",
@@ -17,12 +12,10 @@
     "postinstall": "bower install"
   },
   "devDependencies": {
-    "babel-core": "^4.7.16",
-    "babel-eslint": "^2.0.2",
-    "babel-loader": "^4.2.0",
-    "eslint": "^0.17.1",
-    "grunt": "^0.4.5",
-    "grunt-grunticon": "^2.1.6",
+    "babel-core": "^5.1.8",
+    "babel-eslint": "^3.0.1",
+    "babel-loader": "^5.0.0",
+    "eslint": "^0.19.0",
     "gulp": "^3.6.0",
     "gulp-autoprefixer": "^0.0.7",
     "gulp-changed": "^0.3.0",
@@ -36,11 +29,10 @@
     "gulp-sourcemaps": "^1.5.1",
     "gulp-uglify": "^0.2.1",
     "gulp-util": "^2.2.14",
-    "gulp-webpack": "^1.3.0",
-    "marked": "^0.3.2",
-    "node-bourbon": "^4.2.1-beta1",
-    "node-neat": "^1.7.1-beta1",
-    "sass-loader": "^0.5.0",
+    "gutil": "^1.6.4",
+    "marked": "^0.3.3",
+    "node-sass": "^3.0.0-alpha.0",
+    "sass-loader": "^1.0.1",
     "script-loader": "^0.6.1",
     "webpack": "^1.7.3"
   }

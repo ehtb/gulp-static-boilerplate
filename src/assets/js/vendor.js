@@ -1,1 +1,3 @@
-require('html5shiv');
+'use strict';
+
+require('script!html5shiv');

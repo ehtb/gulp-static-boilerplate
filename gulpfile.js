@@ -2,6 +2,7 @@
 
 var path = require('path');
 var gulp = require('gulp');
+var gutil = require('gutil');
 var plumber = require('gulp-plumber');
 var changed = require('gulp-changed');
 var sass = require('gulp-sass');
@@ -12,25 +13,17 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var importCss = require('gulp-import-css');
 var minifyCSS = require('gulp-minify-css');
-var gulpWebpack = require('gulp-webpack');
 
 var webpack = require('webpack');
 var webpackConfig = require('./webpack.config.js');
 
-var neat = require('node-neat');
-var bourbon = require('node-bourbon');
-
 var srcPath = './src';
-var nodeEnv = process.env.NODE_ENV;
-var isProduction = nodeEnv === 'production';
-var servePath = isProduction ? './httpdocs' : 'build';
+var isProduction = process.env.NODE_ENV === 'production';
+var servePath = isProduction ? './build' : './.httpdocs';
 
-var sassIncludePaths = [].concat(
-                        neat.includePaths,
-                        bourbon.includePaths
-                      );
+var sassIncludePaths = [];
 
-gulp.task('css', function () {
+gulp.task('css:compile', function () {
   gulp.src(srcPath + '/assets/css/vendor.css')
     .pipe(plumber())
     .pipe(importCss())
@@ -41,7 +34,7 @@ gulp.task('css', function () {
     .pipe(connect.reload());
 });
 
-gulp.task('sass', function() {
+gulp.task('sass:compile', function() {
   gulp.src(srcPath + '/assets/css/application.scss')
     .pipe(plumber())
     .pipe(sourcemaps.init())
@@ -59,7 +52,7 @@ gulp.task('sass', function() {
     .pipe(connect.reload());
 });
 
-gulp.task('jade', function() {
+gulp.task('jade:compile', function() {
   gulp.src([
       srcPath + '/**/*.jade',
       '!' + srcPath + '/includes/**/*.*',
@@ -73,7 +66,7 @@ gulp.task('jade', function() {
     .pipe(connect.reload());
 });
 
-gulp.task('images', function() {
+gulp.task('images:compile', function() {
   gulp.src(srcPath + '/assets/img/**/*')
     .pipe(plumber())
     .pipe(changed(servePath + '/assets/img'))
@@ -86,20 +79,16 @@ gulp.task('images', function() {
     .pipe(connect.reload());
 });
 
-gulp.task('webpack', function(callback) {
+gulp.task('webpack:compile', function(callback) {
   var config = Object.create(webpackConfig);
+
+  config.output.path = path.resolve(servePath + '/assets/js');
 
   if (!isProduction) {
     config.devtool = 'source-map';
-    config.cache = true;
     config.debug = true;
   } else {
     config.plugins = config.plugins.concat(
-      new webpack.DefinePlugin({
-        'process.env': {
-          'NODE_ENV': JSON.stringify('production')
-        }
-      }),
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         minimize: true
@@ -107,14 +96,20 @@ gulp.task('webpack', function(callback) {
     );
   }
 
-  gulp.src(srcPath + '/assets/js/**/*')
-    .pipe(plumber())
-    .pipe(gulpWebpack(config))
-    .pipe(gulp.dest(path.resolve(servePath + '/assets/js')))
-    .pipe(connect.reload());
+  webpack(config, function(err, stats) {
+    if (err) {
+      throw new gutil.PluginError('webpack', err);
+    }
+
+    gutil.log('[webpack]', stats.toString({
+      // output options
+    }));
+
+    callback();
+  });
 });
 
-gulp.task('server', function() {
+gulp.task('start-server', function() {
   connect.server({
     root: servePath,
     host: '0.0.0.0',
@@ -124,19 +119,19 @@ gulp.task('server', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('src/assets/css/vendor.js', ['css']);
-  gulp.watch('src/assets/css/**/*', ['sass']);
-  gulp.watch('src/**/*.jade', ['jade']);
-  gulp.watch('src/assets/img/**/*', ['images']);
-  gulp.watch('src/assets/js/**/*.js', ['webpack']);
+  gulp.watch('src/assets/js/**/*.js', ['webpack:compile']);
+  gulp.watch('src/assets/css/vendor.css', ['css:compile']);
+  gulp.watch('src/assets/css/**/*.scss', ['sass:compile']);
+  gulp.watch('src/**/*.jade', ['jade:compile']);
+  gulp.watch('src/assets/img/**/*', ['images:compile']);
 });
 
 gulp.task('compile', [
-  'css',
-  'sass',
-  'jade',
-  'images',
-  'webpack'
+  'webpack:compile',
+  'css:compile',
+  'sass:compile',
+  'jade:compile',
+  'images:compile'
 ]);
 
-gulp.task('default', ['compile', 'server', 'watch']);
+gulp.task('default', ['compile', 'start-server', 'watch']);

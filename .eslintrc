@@ -1,5 +1,5 @@
 ---
-parser: babel-eslint 
+parser: babel-eslint
 
 env:
   browser: true
@@ -8,6 +8,10 @@ env:
 
 globals:
   __DEV__: true
+  BROWSER: true
+
+ecmaFeatures:
+  modules: true
 
 rules:
   # ERRORS
@@ -15,7 +19,7 @@ rules:
   indent: [2, 2, indentSwitchCase: true]
   brace-style: 2
   space-after-keywords: 2
-  strict: 2
+  strict: 0
   # We actually have a transform to support this and we fix this for bundled
   # releases but not for the npm package, so enforce it strictly
   no-comma-dangle: 2
@@ -49,4 +53,4 @@ rules:
   key-spacing: 0
 
   # DISABLED. These currently cause errors when running.
-  no-multi-spaces: 0
+  no-multi-spaces: 0*/

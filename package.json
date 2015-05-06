@@ -8,10 +8,11 @@
   },
   "scripts": {
     "start": "gulp",
-    "build": "NODE_ENV=production gulp compile",
+    "build": "NODE_ENV=production gulp build",
     "postinstall": "bower install"
   },
   "devDependencies": {
+    "babel": "^5.1.13",
     "babel-core": "^5.1.8",
     "babel-eslint": "^3.0.1",
     "babel-loader": "^5.0.0",

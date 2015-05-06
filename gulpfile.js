@@ -1,94 +1,90 @@
 'use strict';
 
+// Register babel to have ES6 support on the server
+require('babel/register');
+
 var path = require('path');
-var gulp = require('gulp');
-var gutil = require('gutil');
-var plumber = require('gulp-plumber');
-var changed = require('gulp-changed');
-var sass = require('gulp-sass');
-var imagemin = require('gulp-imagemin');
-var jade = require('gulp-jade');
-var connect = require('gulp-connect');
-var autoprefixer = require('gulp-autoprefixer');
-var sourcemaps = require('gulp-sourcemaps');
-var importCss = require('gulp-import-css');
-var minifyCSS = require('gulp-minify-css');
+let gulp = require('gulp');
+let gutil = require('gutil');
+let plumber = require('gulp-plumber');
+let changed = require('gulp-changed');
+let sass = require('gulp-sass');
+let imagemin = require('gulp-imagemin');
+let jade = require('gulp-jade');
+let connect = require('gulp-connect');
+let autoprefixer = require('gulp-autoprefixer');
+let sourcemaps = require('gulp-sourcemaps');
+let importCss = require('gulp-import-css');
+let minifyCSS = require('gulp-minify-css');
 
-var webpack = require('webpack');
-var webpackConfig = require('./webpack.config.js');
+let config = require('./config');
 
-var srcPath = './src';
-var isProduction = process.env.NODE_ENV === 'production';
-var servePath = isProduction ? './build' : './.httpdocs';
+let webpack = require('webpack');
+let webpackConfig = require('./webpack.config.js');
 
-var sassIncludePaths = [];
-
-gulp.task('css:compile', function () {
-  gulp.src(srcPath + '/assets/css/vendor.css')
+gulp.task('css', function () {
+  gulp.src(config.css.files)
     .pipe(plumber())
     .pipe(importCss())
     .pipe(minifyCSS({
       keepBreaks: true
     }))
-    .pipe(gulp.dest(servePath + '/assets/css'))
+    .pipe(gulp.dest(config.css.dest))
     .pipe(connect.reload());
 });
 
-gulp.task('sass:compile', function() {
-  gulp.src(srcPath + '/assets/css/application.scss')
+gulp.task('sass', function() {
+  gulp.src(config.sass.files)
     .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(sass({
       errLogToConsole: true,
       outputStyle: 'compressed',
-      includePaths: sassIncludePaths
+      includePaths: config.sass.includePaths || []
     }))
     .pipe(autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
     }))
     .pipe(sourcemaps.write())
-    .pipe(gulp.dest(servePath + '/assets/css'))
+    .pipe(gulp.dest(config.sass.dest))
     .pipe(connect.reload());
 });
 
-gulp.task('jade:compile', function() {
-  gulp.src([
-      srcPath + '/**/*.jade',
-      '!' + srcPath + '/includes/**/*.*',
-      '!' + srcPath + '/assets/**/*.*'
-    ])
+gulp.task('jade', function() {
+  gulp.src(config.jade.files)
     .pipe(plumber())
     .pipe(jade({
-      locals: require(srcPath + '/jade')
+      locals: require(config.jade.locals)
     }))
-    .pipe(gulp.dest(servePath))
+    .pipe(gulp.dest(config.jade.dest))
     .pipe(connect.reload());
 });
 
-gulp.task('images:compile', function() {
-  gulp.src(srcPath + '/assets/img/**/*')
+gulp.task('images', function() {
+  gulp.src(config.images.files)
     .pipe(plumber())
-    .pipe(changed(servePath + '/assets/img'))
+    .pipe(changed(config.images.dest))
     .pipe(imagemin({
       svgoPlugins: [{
         cleanupIDs: false
       }]
     }))
-    .pipe(gulp.dest(servePath + '/assets/img'))
+    .pipe(gulp.dest(config.images.dest))
     .pipe(connect.reload());
 });
 
-gulp.task('webpack:compile', function(callback) {
-  var config = Object.create(webpackConfig);
+gulp.task('webpack', function(callback) {
+  var wpConfig = Object.create(webpackConfig);
 
-  config.output.path = path.resolve(servePath + '/assets/js');
+  wpConfig.entry = config.js.files;
+  wpConfig.output.path = config.js.dest;
 
-  if (!isProduction) {
-    config.devtool = 'source-map';
-    config.debug = true;
+  if (process.env.NODE_ENV === 'production') {
+    wpConfig.devtool = 'source-map';
+    wpConfig.debug = false;
   } else {
-    config.plugins = config.plugins.concat(
+    wpConfig.plugins = wpConfig.plugins.concat(
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         minimize: true
@@ -96,7 +92,7 @@ gulp.task('webpack:compile', function(callback) {
     );
   }
 
-  webpack(config, function(err, stats) {
+  webpack(wpConfig, function(err, stats) {
     if (err) {
       throw new gutil.PluginError('webpack', err);
     }
@@ -111,27 +107,35 @@ gulp.task('webpack:compile', function(callback) {
 
 gulp.task('start-server', function() {
   connect.server({
-    root: servePath,
-    host: '0.0.0.0',
-    port: 8000,
+    root: config.server.root,
+    host: config.server.host,
+    port: config.server.port,
     livereload: true
   });
 });
 
 gulp.task('watch', function() {
-  gulp.watch('src/assets/js/**/*.js', ['webpack:compile']);
-  gulp.watch('src/assets/css/vendor.css', ['css:compile']);
-  gulp.watch('src/assets/css/**/*.scss', ['sass:compile']);
-  gulp.watch('src/**/*.jade', ['jade:compile']);
-  gulp.watch('src/assets/img/**/*', ['images:compile']);
+  gulp.watch(config.js.watch, ['webpack']);
+  gulp.watch(config.css.watch, ['css']);
+  gulp.watch(config.sass.watch, ['sass']);
+  gulp.watch(config.jade.watch, ['jade']);
+  gulp.watch(config.images.watch, ['images']);
+});
+
+gulp.task('copy', function() {
+  gulp.src(config.copy.files, {
+    base: config.copy.base
+  }).pipe(gulp.dest(config.copy.dest));
 });
 
 gulp.task('compile', [
-  'webpack:compile',
-  'css:compile',
-  'sass:compile',
-  'jade:compile',
-  'images:compile'
+  'copy',
+  'webpack',
+  'css',
+  'sass',
+  'jade',
+  'images'
 ]);
 
-gulp.task('default', ['compile', 'start-server', 'watch']);
+gulp.task('default', ['copy', 'compile', 'start-server', 'watch']);
+gulp.task('build', ['copy', 'compile']);

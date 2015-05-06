@@ -11,8 +11,7 @@ Comes with
   - Jade
   - Image compression
   - SaSS
-  - Neat
-  - Bourbon
+  - Docker Compose
   - Autoprefixer
   - EsLint
   - Bower

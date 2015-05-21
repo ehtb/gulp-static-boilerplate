@@ -25,7 +25,9 @@ export default {
       '!./src/includes/**/*.*',
       '!./src/assets/**/*.*'
     ],
-    locals: './src/jade.js',
+    locals: {
+      pretty: false
+    },
     dest: './build'
   },
   images: {

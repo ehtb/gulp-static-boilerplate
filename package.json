@@ -32,7 +32,6 @@
     "gulp-sourcemaps": "^1.5.1",
     "gulp-uglify": "^0.2.1",
     "gulp-webpack": "^1.4.0",
-    "gutil": "^1.6.4",
     "marked": "^0.3.3",
     "node-sass": "^3.0.0-alpha.0",
     "sass-loader": "^1.0.1",

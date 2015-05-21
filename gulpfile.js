@@ -26,7 +26,7 @@ let gulpWebpack = require('gulp-webpack');
 let webpackConfig = require('./webpack.config.js');
 
 gulp.task('css', function () {
-  gulp.src(config.css.files)
+  return gulp.src(config.css.files)
     .pipe(plumber())
     .pipe(importCss())
     .pipe(minifyCSS({
@@ -38,7 +38,7 @@ gulp.task('css', function () {
 });
 
 gulp.task('sass', function() {
-  gulp.src(config.sass.files)
+  return gulp.src(config.sass.files)
     .pipe(plumber())
     .pipe(sourcemaps.init())
     .pipe(sass({
@@ -58,17 +58,17 @@ gulp.task('sass', function() {
 });
 
 gulp.task('jade', function() {
-  gulp.src(config.jade.files)
+  return gulp.src(config.jade.files)
     .pipe(plumber())
     .pipe(jade({
-      locals: require(config.jade.locals)
+      locals: config.jade.locals
     }))
     .pipe(gulp.dest(config.jade.dest))
     .pipe(connect.reload());
 });
 
 gulp.task('images', function() {
-  gulp.src(config.images.files)
+  return gulp.src(config.images.files)
     .pipe(plumber())
     .pipe(changed(config.images.dest))
     .pipe(imagemin({
@@ -95,7 +95,7 @@ gulp.task('webpack', function(callback) {
     wpConfig.debug = false;
   }
 
-  gulp.src(config.js.files)
+  return gulp.src(config.js.files)
     .pipe(named())
     .pipe(gulpWebpack(wpConfig))
     .pipe(header(config.banner, {pkg: pkg}))
@@ -104,7 +104,7 @@ gulp.task('webpack', function(callback) {
 });
 
 gulp.task('start-server', function() {
-  connect.server({
+  return connect.server({
     root: config.server.root,
     host: config.server.host,
     port: config.server.port,
@@ -121,7 +121,7 @@ gulp.task('watch', function() {
 });
 
 gulp.task('copy', function() {
-  gulp.src(config.copy.files, {
+  return gulp.src(config.copy.files, {
     base: config.copy.base
   }).pipe(gulp.dest(config.copy.dest));
 });

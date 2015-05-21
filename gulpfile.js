@@ -3,12 +3,12 @@
 // Register babel to have ES6 support on the server
 require('babel/register');
 
-var path = require('path');
 let gulp = require('gulp');
-let gutil = require('gutil');
+let header = require('gulp-header');
 let plumber = require('gulp-plumber');
 let changed = require('gulp-changed');
 let sass = require('gulp-sass');
+let csso = require('gulp-csso');
 let imagemin = require('gulp-imagemin');
 let jade = require('gulp-jade');
 let connect = require('gulp-connect');
@@ -16,10 +16,13 @@ let autoprefixer = require('gulp-autoprefixer');
 let sourcemaps = require('gulp-sourcemaps');
 let importCss = require('gulp-import-css');
 let minifyCSS = require('gulp-minify-css');
+let pkg = require('./package.json');
 
 let config = require('./config');
 
 let webpack = require('webpack');
+let named = require('vinyl-named');
+let gulpWebpack = require('gulp-webpack');
 let webpackConfig = require('./webpack.config.js');
 
 gulp.task('css', function () {
@@ -29,6 +32,7 @@ gulp.task('css', function () {
     .pipe(minifyCSS({
       keepBreaks: true
     }))
+    .pipe(header(config.banner, {pkg: pkg}))
     .pipe(gulp.dest(config.css.dest))
     .pipe(connect.reload());
 });
@@ -42,11 +46,13 @@ gulp.task('sass', function() {
       outputStyle: 'compressed',
       includePaths: config.sass.includePaths || []
     }))
+    .pipe(csso())
     .pipe(autoprefixer({
       browsers: ['last 2 versions'],
       cascade: false
     }))
     .pipe(sourcemaps.write())
+    .pipe(header(config.banner, {pkg: pkg}))
     .pipe(gulp.dest(config.sass.dest))
     .pipe(connect.reload());
 });
@@ -77,32 +83,24 @@ gulp.task('images', function() {
 gulp.task('webpack', function(callback) {
   var wpConfig = Object.create(webpackConfig);
 
-  wpConfig.entry = config.js.files;
-  wpConfig.output.path = config.js.dest;
-
   if (process.env.NODE_ENV === 'production') {
-    wpConfig.devtool = 'source-map';
-    wpConfig.debug = false;
-  } else {
     wpConfig.plugins = wpConfig.plugins.concat(
       new webpack.optimize.DedupePlugin(),
       new webpack.optimize.UglifyJsPlugin({
         minimize: true
       })
     );
+  } else {
+    wpConfig.devtool = 'source-map';
+    wpConfig.debug = false;
   }
 
-  webpack(wpConfig, function(err, stats) {
-    if (err) {
-      throw new gutil.PluginError('webpack', err);
-    }
-
-    gutil.log('[webpack]', stats.toString({
-      // output options
-    }));
-
-    callback();
-  });
+  gulp.src(config.js.files)
+    .pipe(named())
+    .pipe(gulpWebpack(wpConfig))
+    .pipe(header(config.banner, {pkg: pkg}))
+    .pipe(gulp.dest(config.js.dest))
+    .pipe(connect.reload());
 });
 
 gulp.task('start-server', function() {

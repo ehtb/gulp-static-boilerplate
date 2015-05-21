@@ -1,4 +1,5 @@
 export default {
+  banner: '',
   css: {
     files: [
       './src/assets/css/vendor.css'
@@ -32,10 +33,10 @@ export default {
     watch: './src/assets/img/**/*'
   },
   js: {
-    files: {
-      vendor: './src/assets/js/vendor.js',
-      application: './src/assets/js/application.js'
-    },
+    files: [
+      './src/assets/js/vendor.js',
+      './src/assets/js/application.js'
+    ],
     dest: './.httpdocs/assets/js/',
     watch: './src/assets/js/**/*.js'
   },

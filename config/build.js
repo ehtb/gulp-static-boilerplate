@@ -1,4 +1,11 @@
 export default {
+  banner: [
+    '/**',
+    ' ** <%= pkg.name %> - <%= pkg.description %>',
+    ' ** @author <%= pkg.author %>',
+    ' ** @version v<%= pkg.version %>',
+    ' **/'
+  ].join('\n'),
   css: {
     files: [
       './src/assets/css/vendor.css'
@@ -28,10 +35,10 @@ export default {
     dest: './build/assets/img'
   },
   js: {
-    files: {
-      vendor: './src/assets/js/vendor.js',
-      application: './src/assets/js/application.js'
-    },
+    files: [
+      './src/assets/js/vendor.js',
+      './src/assets/js/application.js'
+    ],
     dest: './build/assets/js/'
   },
   copy: {

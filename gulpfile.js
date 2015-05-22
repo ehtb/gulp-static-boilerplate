@@ -3,27 +3,27 @@
 // Register babel to have ES6 support on the server
 require('babel/register');
 
-let gulp = require('gulp');
-let header = require('gulp-header');
-let plumber = require('gulp-plumber');
-let changed = require('gulp-changed');
-let sass = require('gulp-sass');
-let csso = require('gulp-csso');
-let imagemin = require('gulp-imagemin');
-let jade = require('gulp-jade');
-let connect = require('gulp-connect');
-let autoprefixer = require('gulp-autoprefixer');
-let sourcemaps = require('gulp-sourcemaps');
-let importCss = require('gulp-import-css');
-let minifyCSS = require('gulp-minify-css');
-let pkg = require('./package.json');
+var gulp = require('gulp');
+var header = require('gulp-header');
+var plumber = require('gulp-plumber');
+var changed = require('gulp-changed');
+var sass = require('gulp-sass');
+var csso = require('gulp-csso');
+var imagemin = require('gulp-imagemin');
+var jade = require('gulp-jade');
+var connect = require('gulp-connect');
+var autoprefixer = require('gulp-autoprefixer');
+var sourcemaps = require('gulp-sourcemaps');
+var importCss = require('gulp-import-css');
+var minifyCSS = require('gulp-minify-css');
+var pkg = require('./package.json');
 
-let config = require('./config');
+var config = require('./config');
 
-let webpack = require('webpack');
-let named = require('vinyl-named');
-let gulpWebpack = require('gulp-webpack');
-let webpackConfig = require('./webpack.config.js');
+var webpack = require('webpack');
+var named = require('vinyl-named');
+var gulpWebpack = require('gulp-webpack');
+var webpackConfig = require('./webpack.config.js');
 
 gulp.task('css', function () {
   return gulp.src(config.css.files)

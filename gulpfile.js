@@ -19,7 +19,6 @@ var prettify = require('gulp-prettify');
 var fontgen = require('gulp-fontgen');
 var del = require('del');
 var base64 = require('gulp-base64');
-var mochaPhantomJS = require('gulp-mocha-phantomjs');
 var karma = require('karma').server;
 
 var pkg = require('./package.json');
@@ -125,17 +124,6 @@ gulp.task('watch', function() {
   gulp.watch(config.fonts.watch, ['fonts']);
 });
 
-gulp.task('watch:test', function() {
-  gulp.watch(config.js.watch, ['webpack']);
-});
-
-gulp.task('mocha', function() {
-  return gulp.src(config.mocha.files)
-    .pipe(mochaPhantomJS({
-      reporter: 'spec'
-    }));
-});
-
 gulp.task('karma', function(done) {
   return karma.start({
     configFile: __dirname + '/karma.conf.js',
@@ -178,5 +166,4 @@ gulp.task('compile', [
 
 gulp.task('default', ['clean', 'compile', 'start-server', 'watch']);
 gulp.task('build', ['clean', 'compile', 'prettify']);
-gulp.task('test', ['webpack', 'start-server', 'watch:test']);
-gulp.task('test:mocha', ['webpack', 'mocha']);
+gulp.task('test', ['karma']);

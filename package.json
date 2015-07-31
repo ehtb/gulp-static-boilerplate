@@ -7,7 +7,6 @@
   "scripts": {
     "start": "gulp",
     "test": "NODE_ENV=test gulp test",
-    "mocha": "NODE_ENV=test gulp test:mocha",
     "build": "NODE_ENV=production gulp build",
     "postinstall": ""
   },
@@ -46,11 +45,8 @@
     "karma-phantomjs-launcher": "^0.2.0",
     "karma-sourcemap-loader": "^0.3.5",
     "karma-webpack": "^1.5.1",
-    "load-grunt-tasks": "^3.1.0",
     "marked": "^0.3.3",
     "mocha": "^2.2.5",
-    "mocha-phantomjs": "^4.0.0-beta1",
-    "phantomjs": "^1.9.17",
     "sass-loader": "^1.0.1",
     "script-loader": "^0.6.1",
     "vinyl-named": "^1.1.0",

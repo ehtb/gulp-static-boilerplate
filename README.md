@@ -14,5 +14,7 @@ Comes with
   - Docker Compose
   - Autoprefixer
   - EsLint
-  - Bower
+  - Bower (removed)
   - Editor Config
+  - Mocha
+  - Karma

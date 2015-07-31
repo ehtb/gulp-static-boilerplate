@@ -6,7 +6,6 @@ require('babel/register');
 var gulp = require('gulp');
 var header = require('gulp-header');
 var plumber = require('gulp-plumber');
-var changed = require('gulp-changed');
 var sass = require('gulp-sass');
 var csso = require('gulp-csso');
 var imagemin = require('gulp-imagemin');
@@ -16,16 +15,20 @@ var autoprefixer = require('gulp-autoprefixer');
 var sourcemaps = require('gulp-sourcemaps');
 var importCss = require('gulp-import-css');
 var minifyCSS = require('gulp-minify-css');
-var pkg = require('./package.json');
+var prettify = require('gulp-prettify');
+var fontgen = require('gulp-fontgen');
+var del = require('del');
+var base64 = require('gulp-base64');
+var mochaPhantomJS = require('gulp-mocha-phantomjs');
+var karma = require('karma').server;
 
+var pkg = require('./package.json');
 var config = require('./config');
 
-var webpack = require('webpack');
 var named = require('vinyl-named');
 var gulpWebpack = require('gulp-webpack');
-var webpackConfig = require('./webpack.config.js');
 
-gulp.task('css', function () {
+gulp.task('css', function() {
   return gulp.src(config.css.files)
     .pipe(plumber())
     .pipe(importCss())
@@ -46,6 +49,10 @@ gulp.task('sass', function() {
       outputStyle: 'compressed',
       includePaths: config.sass.includePaths || []
     }))
+    .pipe(base64({
+      extensions: ['svg'],
+      debug: true
+    }))
     .pipe(csso())
     .pipe(autoprefixer({
       browsers: ['last 2 versions'],
@@ -61,7 +68,7 @@ gulp.task('jade', function() {
   return gulp.src(config.jade.files)
     .pipe(plumber())
     .pipe(jade({
-      locals: config.jade.locals
+      pretty: true
     }))
     .pipe(gulp.dest(config.jade.dest))
     .pipe(connect.reload());
@@ -70,41 +77,37 @@ gulp.task('jade', function() {
 gulp.task('images', function() {
   return gulp.src(config.images.files)
     .pipe(plumber())
-    .pipe(changed(config.images.dest))
-    .pipe(imagemin({
-      svgoPlugins: [{
-        cleanupIDs: false
-      }]
-    }))
+    .pipe(imagemin())
     .pipe(gulp.dest(config.images.dest))
     .pipe(connect.reload());
 });
 
-gulp.task('webpack', function(callback) {
-  var wpConfig = Object.create(webpackConfig);
+gulp.task('svg', function() {
+  return gulp.src(config.svg.files)
+    .pipe(plumber())
+    .pipe(imagemin())
+    .pipe(gulp.dest(config.svg.dest))
+    .pipe(connect.reload());
+});
 
-  if (process.env.NODE_ENV === 'production') {
-    wpConfig.plugins = wpConfig.plugins.concat(
-      new webpack.optimize.DedupePlugin(),
-      new webpack.optimize.UglifyJsPlugin({
-        minimize: true
-      })
-    );
-  } else {
-    wpConfig.devtool = 'source-map';
-    wpConfig.debug = false;
-  }
+gulp.task('fonts', function() {
+  return gulp.src(config.fonts.files)
+    .pipe(fontgen({
+      dest: config.fonts.dest
+    }));
+});
 
+gulp.task('webpack', function() {
   return gulp.src(config.js.files)
     .pipe(named())
-    .pipe(gulpWebpack(wpConfig))
+    .pipe(gulpWebpack(config.webpack))
     .pipe(header(config.banner, {pkg: pkg}))
     .pipe(gulp.dest(config.js.dest))
     .pipe(connect.reload());
 });
 
 gulp.task('start-server', function() {
-  return connect.server({
+  connect.server({
     root: config.server.root,
     host: config.server.host,
     port: config.server.port,
@@ -118,6 +121,37 @@ gulp.task('watch', function() {
   gulp.watch(config.sass.watch, ['sass']);
   gulp.watch(config.jade.watch, ['jade']);
   gulp.watch(config.images.watch, ['images']);
+  gulp.watch(config.svg.watch, ['svg']);
+  gulp.watch(config.fonts.watch, ['fonts']);
+});
+
+gulp.task('watch:test', function() {
+  gulp.watch(config.js.watch, ['webpack']);
+});
+
+gulp.task('mocha', function() {
+  return gulp.src(config.mocha.files)
+    .pipe(mochaPhantomJS({
+      reporter: 'spec'
+    }));
+});
+
+gulp.task('karma', function(done) {
+  return karma.start({
+    configFile: __dirname + '/karma.conf.js',
+    singleRun: false
+  }, done);
+});
+
+gulp.task('prettify', ['compile'], function() {
+  return gulp.src(config.prettify.files)
+    .pipe(prettify({
+      indent_size: 2,
+      indent_inner_html: true,
+      wrap_attributes: true,
+      unformatted: []
+    }))
+    .pipe(gulp.dest(config.prettify.dest));
 });
 
 gulp.task('copy', function() {
@@ -126,14 +160,23 @@ gulp.task('copy', function() {
   }).pipe(gulp.dest(config.copy.dest));
 });
 
+gulp.task('clean', function(cb) {
+  del.sync([config.clean.files]);
+  cb();
+});
+
 gulp.task('compile', [
   'copy',
+  'svg',
   'webpack',
   'css',
   'sass',
   'jade',
+  'fonts',
   'images'
 ]);
 
-gulp.task('default', ['copy', 'compile', 'start-server', 'watch']);
-gulp.task('build', ['copy', 'compile']);
+gulp.task('default', ['clean', 'compile', 'start-server', 'watch']);
+gulp.task('build', ['clean', 'compile', 'prettify']);
+gulp.task('test', ['webpack', 'start-server', 'watch:test']);
+gulp.task('test:mocha', ['webpack', 'mocha']);

@@ -1,101 +1,67 @@
-import _ from 'lodash';
-
-let webpack = require('webpack');
-
-let src = './src';
-let dest = './.httpdocs';
-
-let base = require('./base');
-
-export default _.merge(base, {
-  clean: {
-    files: `${dest}/**/*`
-  },
+export default {
   banner: '',
   css: {
     files: [
-      `${src}/assets/css/vendor.css`
+      './src/assets/css/vendor.css'
     ],
-    dest: `${dest}/assets/css`,
-    watch: `${src}/assets/css/**/*.css`
+    dest: './.httpdocs/assets/css',
+    watch: './src/assets/css/**/*.css'
   },
   sass: {
     files: [
-      `${src}/assets/css/application.scss`
+      './src/assets/css/application.scss'
     ],
-    dest: `${dest}/assets/css`,
-    watch: `${src}/assets/css/**/*.scss`,
-    includePaths: []
+    dest: './.httpdocs/assets/css',
+    watch: './src/assets/css/**/*.scss',
+    includePaths: [].concat(
+      './node_modules/breakpoint-sass/stylesheets',
+      './node_modules/susy/sass'
+    )
   },
   jade: {
     files: [
-      `${src}/**/*.jade`,
-      `!${src}/includes/**/*.*`,
-      `!${src}/assets/**/*.*`
+      './src/**/*.jade',
+      '!./src/includes/**/*.*',
+      '!./src/assets/**/*.*'
     ],
-    dest: `${dest}`,
-    watch: `${src}/**/*.jade`
+    locals: {
+      pretty: true
+    },
+    dest: './.httpdocs',
+    watch: './src/**/*.jade'
   },
   images: {
     files: [
-      `${src}/assets/img/**/*.{png,jpg}`
+      './src/assets/images/**/*'
     ],
-    dest: `${dest}/assets/img`,
-    watch: [
-      `${src}/assets/img/**/*.{png,jpg}`
-    ]
+    dest: './.httpdocs/assets/images',
+    watch: './src/assets/images/**/*'
   },
-  fonts: {
-    files: [
-      `${src}/assets/fonts/*.{otf,ttf}`
-    ],
-    dest: `${dest}/assets/fonts`,
-    watch: [
-      `${src}/assets/fonts/*.{otf,ttf}`
-    ]
-  },
-  svg: {
-    files: [
-      `${src}/assets/css/svg/src/**/*.svg`
-    ],
-    dest: `${src}/assets/css/svg/minified`,
-    watch: [
-      `${src}/assets/css/svg/src/*.svg`,
-      `${src}/assets/css/svg/src/**/*.svg`
-    ]
+  json: {
+    watch: './src/assets/**/*.json'
   },
   js: {
     files: [
-      `${src}/assets/js/vendor.js`,
-      `${src}/assets/js/application.js`
+      './src/assets/js/vendor.js',
+      './src/assets/js/application.js'
     ],
-    dest: `${dest}/assets/js/`,
-    watch: `${src}/assets/js/**/*.js`
-  },
-  webpack: {
-    devtool: 'source-map-inline',
-    debug: true,
-    plugins: [
-      new webpack.DefinePlugin({
-        __DEV__: JSON.stringify(true),
-        __TEST__: JSON.stringify(false),
-        __RELEASE__: JSON.stringify(false)
-      })
-    ]
+    dest: './.httpdocs/assets/js/',
+    watch: './src/js/**/*.js'
   },
   copy: {
     files: [
-      `${src}/sitemap.xml`,
-      `${src}/robots.txt`,
-      `${src}/assets/fonts/*`,
-      `${src}/assets/swf/*`
+    
+      './src/assets/audio/**/*',
+      './src/sitemap.xml',
+      './src/robots.txt',
+      './src/assets/**/*.json'
     ],
-    base: `${src}`,
-    dest: `${dest}`
+    base: './src',
+    dest: './.httpdocs'
   },
   server: {
-    root: `${dest}`,
+    root: './.httpdocs',
     host: '0.0.0.0',
     port: 8000
   }
-});
+};

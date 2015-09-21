@@ -1,16 +1,4 @@
-import _ from 'lodash';
-
-let webpack = require('webpack');
-
-let src = './src';
-let dest = './build';
-
-let base = require('./base');
-
-export default _.merge(base, {
-  clean: {
-    files: `${dest}/**/*`
-  },
+export default {
   banner: [
     '/**',
     ' ** <%= pkg.name %> - <%= pkg.description %>',
@@ -20,73 +8,48 @@ export default _.merge(base, {
   ].join('\n'),
   css: {
     files: [
-      `${src}/assets/css/vendor.css`
+      './src/assets/css/vendor.css'
     ],
-    dest: `${dest}/assets/css`
+    dest: './build/assets/css'
   },
   sass: {
     files: [
-      `${src}/assets/css/application.scss`
+      './src/assets/css/application.scss'
     ],
-    dest: `${dest}/assets/css`,
-    includePaths: []
+    dest: './build/assets/css',
+    includePaths: [].concat(
+    )
   },
   jade: {
     files: [
-      `${src}/**/*.jade`,
-      `!${src}/includes/**/*.*`,
-      `!${src}/assets/**/*.*`
+      './src/**/*.jade',
+      '!./src/includes/**/*.*',
+      '!./src/assets/**/*.*'
     ],
-    dest: `${dest}`
+    locals: {
+      pretty: true
+    },
+    dest: './build'
   },
   images: {
     files: [
-      `${src}/assets/img/**/*.{png,jpg}`
+      './src/assets/img/**/*'
     ],
-    dest: `${dest}/assets/img`
-  },
-  svg: {
-    files: [
-      `${src}/assets/css/svg/src/**/*.svg`
-    ],
-    dest: `${src}/assets/css/svg/minified`
+    dest: './build/assets/img'
   },
   js: {
     files: [
-      `${src}/assets/js/vendor.js`,
-      `${src}/assets/js/application.js`
+      './src/assets/js/vendor.js',
+      './src/assets/js/application.js'
     ],
-    dest: `${dest}/assets/js/`
-  },
-  fonts: {
-    files: [
-      `${src}/assets/fonts/**/*.{otf,ttf}`
-    ],
-    dest: `${dest}/assets/fonts`
-  },
-  prettify: {
-    files: `${src}/**/*.html`,
-    dest: dest
-  },
-  webpack: {
-    plugins: [
-      new webpack.optimize.DedupePlugin(),
-      new webpack.DefinePlugin({
-        __DEV__: JSON.stringify(false),
-        __TEST__: JSON.stringify(false),
-        __RELEASE__: JSON.stringify(true)
-      }),
-      new webpack.optimize.UglifyJsPlugin()
-    ]
+    dest: './build/assets/js/'
   },
   copy: {
     files: [
-      `${src}/sitemap.xml`,
-      `${src}/robots.txt`,
-      `${src}/assets/fonts/*`,
-      `${src}/assets/swf/*`
+      './src/sitemap.xml',
+      './src/robots.txt'
     ],
-    base: `${src}`,
-    dest: `${dest}`
+    base: './src',
+    dest: './.httpdocs'
   }
-});
+};
